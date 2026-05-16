@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>NEXON</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nexon">
+  <style>
+    .dash { padding: 88px 48px 48px; min-height: 100vh; }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .dash-avatar-wrap { position: relative; flex-shrink: 0; }
+
+    .dash-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(229,9,20,0.4);
+      background: var(--surface2);
+      display: block;
+    }
+
+    .dash-avatar-placeholder {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: rgba(229,9,20,0.12);
+      border: 2px solid rgba(229,9,20,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-title);
+      font-size: 36px;
+      color: var(--red);
+    }
+
+    .dash-avatar-upload {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 28px; height: 28px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid var(--black);
+      transition: var(--transition);
+    }
+
+    .dash-avatar-upload:hover { background: var(--red-dim); transform: scale(1.1); }
+
+    .dash-avatar-upload svg {
+      width: 13px; height: 13px;
+      stroke: white; fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .dash-user-name {
+      font-family: var(--font-title);
+      font-size: 40px;
+      letter-spacing: 1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .dash-user-email { font-size: 13px; color: var(--text-muted); }
+
+    .dash-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .dash-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dash-stat::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+    }
+
+    .dash-stat-value { font-family: var(--font-title); font-size: 44px; color: var(--red); line-height: 1; margin-bottom: 4px; }
+    .dash-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+
+    /* Sections */
+    .dash-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .dash-section-title {
+      font-family: var(--font-title);
+      font-size: 20px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dash-section-title svg {
+      width: 18px; height: 18px;
+      stroke: var(--red); fill: none;
+      stroke-width: 2; stroke-linecap: round;
+    }
+
+    .form-row { display: flex; flex-direction: column; gap: 14px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 14px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .form-input:focus { outline: none; border-color: var(--red); background: rgba(229,9,20,0.05); box-shadow: 0 0 0 3px rgba(229,9,20,0.08); }
+    .form-input::placeholder { color: rgba(255,255,255,0.2); }
+
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    .save-btn {
+      background: var(--red);
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 11px 24px;
+      border-radius: 8px;
+      transition: var(--transition);
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    .save-btn:hover { background: var(--red-dim); transform: translateY(-1px); }
+    .save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-success {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #4ade80;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .form-error {
+      background: rgba(229,9,20,0.1);
+      border: 1px solid rgba(229,9,20,0.3);
+      color: #ff6b6b;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .logout-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .logout-btn {
+      background: rgba(229,9,20,0.1);
+      border: 1px solid rgba(229,9,20,0.3);
+      color: var(--red);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 11px 24px;
+      border-radius: 8px;
+      transition: var(--transition);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logout-btn:hover { background: var(--red); color: white; }
+    .logout-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+    @media (max-width: 768px) {
+      .dash { padding: 80px 20px 32px; }
+      .dash-header { gap: 16px; }
+      .dash-stats { grid-template-columns: repeat(2, 1fr); }
+      .dash-section { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-logo" style="display:flex;align-items:center;gap:0;line-height:1;">NEXON</div>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="/"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></a>
+      <a href="/watchlist"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg><span>Watchlist</span></a>
+      <a href="/history"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>History</span></a>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-avatar-wrap">
+      <button class="nav-avatar-btn" onclick="toggleProfileDropdown()">
+        {% if user.avatar %}
+        <img src="{{ user.avatar }}" alt="{{ user.name }}" class="nav-avatar-img">
+        {% else %}
+        <div class="nav-avatar-initial">{{ user.name[0].upper() }}</div>
+        {% endif %}
+      </button>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-header">
+          {% if user.avatar %}
+          <img src="{{ user.avatar }}" class="profile-dropdown-avatar-img">
+          {% else %}
+          <div class="profile-dropdown-avatar">{{ user.name[0].upper() }}</div>
+          {% endif %}
+          <div>
+            <div class="profile-dropdown-name">{{ user.name }}</div>
+            <div class="profile-dropdown-email">{{ user.email }}</div>
+          </div>
+        </div>
+        <div class="profile-dropdown-divider"></div>
+        <a href="/dashboard" class="profile-dropdown-item active-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Account Settings</a>
+        <a href="/watchlist" class="profile-dropdown-item"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>My Watchlist</a>
+        <a href="/history" class="profile-dropdown-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Watch History</a>
+        <div class="profile-dropdown-divider"></div>
+        <a href="/logout" class="profile-dropdown-item profile-dropdown-logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="dash">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-avatar-wrap">
+      {% if user.avatar %}
+      <img class="dash-avatar" src="{{ user.avatar }}" alt="{{ user.name }}" id="dashAvatar">
+      {% else %}
+      <div class="dash-avatar-placeholder" id="dashAvatar">{{ user.name[0].upper() }}</div>
+      {% endif %}
+      <label class="dash-avatar-upload" for="avatarInput" title="Change photo">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </label>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+    </div>
+    <div>
+      <div class="dash-user-name" id="dashName">{{ user.name.upper() }}</div>
+      <div class="dash-user-email">{{ user.email }}</div>
+      {% if user.bio %}
+      <div style="font-size:13px;color:var(--text-muted);margin-top:4px;" id="dashBioDisplay">{{ user.bio }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="dash-stats">
+    <div class="dash-stat">
+      <div class="dash-stat-value">{{ stats.watched }}</div>
+      <div class="dash-stat-label">Watched</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-stat-value">{{ stats.watchlist }}</div>
+      <div class="dash-stat-label">Watchlist</div>
+    </div>
+    <div class="dash-stat">
+      <div class="dash-stat-value">{{ stats.avg_rating or '—' }}</div>
+      <div class="dash-stat-label">Avg Rating</div>
+    </div>
+  </div>
+
+  <!-- Edit Profile -->
+  <div class="dash-section">
+    <div class="dash-section-title">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile Info
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Display Name</label>
+        <input class="form-input" id="profileName" type="text" value="{{ user.name }}" placeholder="Your name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" value="{{ user.email }}" disabled style="opacity:0.5;cursor:not-allowed;">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea class="form-input" id="profileBio" placeholder="Tell us about yourself...">{{ user.bio or '' }}</textarea>
+      </div>
+      <div class="form-success" id="profileSuccess">Profile updated successfully!</div>
+      <div class="form-error" id="profileError"></div>
+      <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="dash-section">
+    <div class="dash-section-title">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Change Password
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Current Password</label>
+        <input class="form-input" id="currentPass" type="password" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label class="form-label">New Password</label>
+        <input class="form-input" id="newPass" type="password" placeholder="Min 6 characters">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm New Password</label>
+        <input class="form-input" id="confirmPass" type="password" placeholder="Repeat new password">
+      </div>
+      <div class="form-success" id="passSuccess">Password changed successfully!</div>
+      <div class="form-error" id="passError"></div>
+      <button class="save-btn" onclick="changePassword()">Change Password</button>
+    </div>
+  </div>
+
+  <!-- Sign Out -->
+  <div class="dash-section">
+    <div class="logout-section">
+      <div>
+        <div style="font-weight:600;margin-bottom:4px;">Sign Out</div>
+        <div style="font-size:13px;color:var(--text-muted);">You'll need to sign in again to access your account.</div>
+      </div>
+      <a href="/logout" class="logout-btn">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  function toggleProfileDropdown() {
+    document.getElementById('profileDropdown').classList.toggle('show');
+  }
+
+  document.addEventListener('click', e => {
+    const wrap = document.querySelector('.nav-avatar-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      document.getElementById('profileDropdown')?.classList.remove('show');
+    }
+  });
+
+  async function saveProfile() {
+    const name = document.getElementById('profileName').value.trim();
+    const bio  = document.getElementById('profileBio').value.trim();
+    const successEl = document.getElementById('profileSuccess');
+    const errorEl   = document.getElementById('profileError');
+
+    successEl.style.display = 'none';
+    errorEl.style.display   = 'none';
+
+    const res  = await fetch('/api/profile/update', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, bio })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      successEl.style.display = 'block';
+      document.getElementById('dashName').textContent = name.toUpperCase();
+    } else {
+      errorEl.textContent     = data.error;
+      errorEl.style.display   = 'block';
+    }
+  }
+
+  async function uploadAvatar(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const res  = await fetch('/api/profile/avatar', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    if (data.success) {
+      const el = document.getElementById('dashAvatar');
+      if (el.tagName === 'IMG') {
+        el.src = data.avatar + '?t=' + Date.now();
+      } else {
+        const img = document.createElement('img');
+        img.className = 'dash-avatar';
+        img.id        = 'dashAvatar';
+        img.src       = data.avatar;
+        el.replaceWith(img);
+      }
+      showToast('Profile photo updated!');
+    } else {
+      showToast('Upload failed: ' + data.error);
+    }
+  }
+
+  async function changePassword() {
+    const current  = document.getElementById('currentPass').value;
+    const newPass  = document.getElementById('newPass').value;
+    const confirm  = document.getElementById('confirmPass').value;
+    const successEl = document.getElementById('passSuccess');
+    const errorEl   = document.getElementById('passError');
+
+    successEl.style.display = 'none';
+    errorEl.style.display   = 'none';
+
+    if (newPass !== confirm) {
+      errorEl.textContent   = 'New passwords do not match.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const res  = await fetch('/api/profile/password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ current_password: current, new_password: newPass })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      successEl.style.display = 'block';
+      document.getElementById('currentPass').value = '';
+      document.getElementById('newPass').value     = '';
+      document.getElementById('confirmPass').value = '';
+    } else {
+      errorEl.textContent   = data.error;
+      errorEl.style.display = 'block';
+    }
+  }
+
+  function showToast(message) {
+    const container = document.getElementById('toastContainer');
+    const toast     = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3200);
+  }
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js');
+  }
+</script>
+</body>
+</html>

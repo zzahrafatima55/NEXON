@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXON</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="/static/favicon/favicon.ico">
+  <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nexon">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+
+<link rel="apple-touch-icon" href="/static/favicon/apple-touch-icon.png">
+
+<link rel="manifest" href="/static/favicon/site.webmanifest">
+  <style>
+    /* ── Hero Banner ─────────────────────────────────────────── */
+    .hero-banner {
+      position: relative;
+      width: 100%;
+      height: 85vh;
+      min-height: 500px;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+
+    .hero-banner-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .hero-banner-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(10,10,10,0.2) 0%,
+        rgba(10,10,10,0.1) 40%,
+        rgba(10,10,10,0.7) 70%,
+        rgba(10,10,10,1) 100%
+      ), linear-gradient(
+        to right,
+        rgba(10,10,10,0.9) 0%,
+        rgba(10,10,10,0.4) 50%,
+        transparent 100%
+      );
+    }
+
+    .hero-banner-content {
+      position: absolute;
+      bottom: 80px;
+      left: 48px;
+      max-width: 520px;
+    }
+
+    .hero-banner-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 12px;
+    }
+
+    .hero-banner-title {
+      font-family: var(--font-title);
+      font-size: clamp(40px, 5vw, 72px);
+      line-height: 1;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+    }
+
+    .hero-banner-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .hero-banner-rating {
+      color: #f5c518;
+      font-weight: 700;
+    }
+
+    .hero-banner-overview {
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 24px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hero-banner-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .hero-no-image {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 80px;
+      padding-left: 48px;
+    }
+
+    /* ── AI Section ──────────────────────────────────────────── */
+    .ai-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 32px 48px;
+      margin-bottom: 48px;
+    }
+
+    .ai-section-inner {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      max-width: 1200px;
+    }
+
+    .ai-section-label {
+      flex-shrink: 0;
+    }
+
+    .ai-section-label .ai-badge {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .ai-section-label h3 {
+      font-family: var(--font-title);
+      font-size: 22px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    .ai-section-label h3 span { color: var(--red); }
+
+    .ai-divider {
+      width: 1px;
+      height: 48px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .ai-section-input {
+      flex: 1;
+      display: flex;
+      gap: 10px;
+    }
+
+    .ai-section-result {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .ai-section-result.show { display: block; }
+
+    /* ── Top 10 ──────────────────────────────────────────────── */
+    .top10-grid {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scroll-snap-type: x mandatory;
+    }
+
+    .top10-grid::-webkit-scrollbar { height: 4px; }
+    .top10-grid::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+
+    .top10-item {
+      position: relative;
+      flex-shrink: 0;
+      width: 160px;
+      scroll-snap-align: start;
+      cursor: pointer;
+    }
+
+    .top10-number {
+      position: absolute;
+      bottom: -10px;
+      left: -20px;
+      font-family: var(--font-title);
+      font-size: 120px;
+      line-height: 1;
+      color: var(--black);
+      -webkit-text-stroke: 3px var(--border);
+      z-index: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .top10-poster {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      display: block;
+      border: 1px solid var(--border);
+      position: relative;
+      z-index: 2;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .top10-item:hover .top10-poster {
+      transform: scale(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .top10-placeholder {
+      width: 100%;
+      height: 220px;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .top10-info {
+      padding: 8px 4px 4px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .top10-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Sections ────────────────────────────────────────────── */
+    .sections-wrap {
+      padding: 0 48px 48px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner-content { left: 20px; bottom: 60px; }
+      .ai-section { padding: 24px 20px; }
+      .ai-section-inner { flex-direction: column; align-items: flex-start; }
+      .ai-divider { display: none; }
+      .ai-section-input { width: 100%; }
+      .sections-wrap { padding: 0 20px 32px; }
+      .top10-number { font-size: 80px; }
+    }
+  </style>
+</head>
+<body>
+<!-- 
+  PASTE THIS NAVBAR INTO: index.html, watchlist.html, history.html
+  Replace the entire <nav>...</nav> block with this
+-->
+<nav class="navbar">
+<div class="nav-logo">NEXON<img src="/static/images/logo.png" alt="logo" style="height:50px; display:inline-block; vertical-align:middle; "></div>
+    <div class="nav-right">
+    <div class="nav-links">
+      <a href="/" id="navHome">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Home</span>
+      </a>
+      <a href="/watchlist" id="navWatchlist">
+        <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <span>Watchlist</span>
+      </a>
+      <a href="/history" id="navHistory">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>History</span>
+      </a>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="search-wrap">
+      <span class="search-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="text" id="searchInput" placeholder="Search movies..." autocomplete="off">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <div class="nav-divider"></div>
+
+    <!-- Avatar dropdown -->
+    <div class="nav-avatar-wrap" id="navAvatarWrap">
+      <button class="nav-avatar-btn" id="navAvatarBtn" onclick="toggleProfileDropdown()">
+        <!-- filled by JS from server data -->
+      </button>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dropdown-header">
+          <div class="profile-dropdown-avatar" id="dropdownAvatar"></div>
+          <div>
+            <div class="profile-dropdown-name" id="dropdownName"></div>
+            <div class="profile-dropdown-email" id="dropdownEmail"></div>
+          </div>
+        </div>
+        <div class="profile-dropdown-divider"></div>
+        <a href="/dashboard" class="profile-dropdown-item">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Account Settings
+        </a>
+        <a href="/watchlist" class="profile-dropdown-item">
+          <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          My Watchlist
+        </a>
+        <a href="/history" class="profile-dropdown-item">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Watch History
+        </a>
+        <div class="profile-dropdown-divider"></div>
+        <a href="/logout" class="profile-dropdown-item profile-dropdown-logout">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </a>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<!-- User data for navbar (add to every page, inside <body>) -->
+<!-- server fills this, JS reads it -->
+<script id="currentUserData" type="application/json">
+  {{ {"name": current_user.name, "email": current_user.email, "avatar": current_user.avatar or ""} | tojson }}
+</script>
+
+<!-- Toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="movieModal">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-poster-row" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- Hero Banner -->
+{% if featured %}
+<div class="hero-banner {% if not (featured.backdrop or featured.poster) %}hero-no-image{% endif %}">
+
+  {% if featured.backdrop or featured.poster %}
+  <img 
+    class="hero-banner-img"
+    src="{{ featured.backdrop or featured.poster }}"
+    alt="{{ featured.title }}"
+    id="heroBannerImg">
+  {% endif %}
+
+  <div class="hero-banner-gradient"></div>
+
+  <div class="hero-banner-content">
+    <div class="hero-banner-label">✦ Now Trending</div>
+
+    <div class="hero-banner-title">
+      {{ featured.title }}
+    </div>
+
+    <div class="hero-banner-meta">
+      <span class="hero-banner-rating">★ {{ featured.rating }}</span>
+      <span>{{ featured.year }}</span>
+    </div>
+
+    <div class="hero-banner-overview">
+      {{ featured.overview }}
+    </div>
+
+    <div class="hero-banner-actions">
+      <button class="btn-primary" id="heroWatchlist">
+        + Watchlist
+      </button>
+
+      <button class="btn-outline" id="heroWatched">
+        ✓ Watched
+      </button>
+    </div>
+  </div>
+
+</div>
+{% endif %}
+
+<!-- AI Mood Recommender -->
+<div class="ai-section">
+  <div class="ai-section-inner">
+    <div class="ai-section-label">
+      <span class="ai-badge">AI</span>
+      <h3>MOOD <span>PICKS</span></h3>
+    </div>
+    <div class="ai-divider"></div>
+    <div class="ai-section-input" style="flex-direction:column;">
+      <div style="display:flex;gap:10px;">
+        <input class="ai-input" id="moodInput" type="text"
+               placeholder="How are you feeling? e.g. sad, excited, adventurous..."
+               onkeydown="if(event.key==='Enter') getAIRecs()"
+               style="flex:1;">
+        <button class="btn-primary" id="aiBtn" onclick="getAIRecs()">Get Picks</button>
+      </div>
+      <div class="ai-section-result" id="aiResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Sections ─────────────────────────────────────────────── -->
+<div class="sections-wrap">
+
+  {% if not online %}
+  <div class="offline-banner">
+    ⚡ You're offline — showing saved data only.
+  </div>
+  {% endif %}
+
+  <!-- Top 10 -->
+  {% if top10 %}
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">TOP <span>10</span> TODAY</h2>
+    </div>
+    <div class="top10-grid">
+      {% for movie in top10 %}
+      <div class="top10-item" data-movie='{{ movie | tojson }}'>
+        <div class="top10-number">{{ loop.index }}</div>
+        {% if movie.poster %}
+        <img class="top10-poster" src="{{ movie.poster }}" alt="{{ movie.title }}" loading="lazy">
+        {% else %}
+        <div class="top10-placeholder">🎬</div>
+        {% endif %}
+        <div class="top10-info">
+          <div class="top10-title">{{ movie.title }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Trending / Popular / Top Rated -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">NOW <span>TRENDING</span></h2>
+      <div class="section-tabs">
+        <button class="tab-btn active" onclick="switchTab('trending', this)">Trending</button>
+        <button class="tab-btn" onclick="switchTab('popular', this)">Popular</button>
+        <button class="tab-btn" onclick="switchTab('top_rated', this)">Top Rated</button>
+      </div>
+    </div>
+
+    {% if online %}
+    <div class="movie-grid" id="movieGrid">
+      {% for movie in trending %}
+      <div class="movie-card" data-movie='{{ movie | tojson }}'>
+        {% if movie.poster %}
+        <img class="movie-poster" src="{{ movie.poster }}" alt="{{ movie.title }}" loading="lazy">
+        {% else %}
+        <div class="movie-poster-placeholder">🎬</div>
+        {% endif %}
+        <div class="movie-overlay">
+          <div class="overlay-title">{{ movie.title }}</div>
+          <div class="overlay-overview">{{ movie.overview }}</div>
+          <div class="overlay-actions">
+            <button class="btn-icon wl-btn">+ Watchlist</button>
+            <button class="btn-icon wt-btn">✓ Watched</button>
+          </div>
+        </div>
+        <div class="movie-info">
+          <div class="movie-title">{{ movie.title }}</div>
+          <div class="movie-meta">
+            <span>{{ movie.year }}</span>
+            <span class="movie-rating">★ {{ movie.rating }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="emoji">📡</div>
+      <h3>No Internet Connection</h3>
+      <p>Connect to the internet to browse movies.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+<script src="/static/js/main.js"></script>
+{% if featured %}
+<script id="featuredData" type="application/json">{{ featured | tojson }}</script>
+{% endif %}
+<script id="top10Data" type="application/json">{{ top10 | tojson }}</script>
+
+<script>
+  // Hero banner buttons
+  const featuredData = document.getElementById('featuredData');
+  let featuredMovie  = featuredData ? JSON.parse(featuredData.textContent) : null;
+  window._heroMovie  = featuredMovie;
+
+  document.getElementById('heroWatchlist')?.addEventListener('click', () => addToWatchlist(window._heroMovie));
+  document.getElementById('heroWatched')?.addEventListener('click',   () => markWatched(window._heroMovie));
+
+  // Auto-rotate hero every 3 seconds
+  const top10Data = JSON.parse(document.getElementById('top10Data').textContent);
+let heroIndex = 0;
+
+function updateHero(movie) {
+  const img      = document.querySelector('.hero-banner-img');
+  const title    = document.querySelector('.hero-banner-title');
+  const overview = document.querySelector('.hero-banner-overview');
+  const rating   = document.querySelector('.hero-banner-rating');
+  const year     = document.querySelector('.hero-banner-meta span:last-child');
+
+  if (img) {
+    img.style.opacity = '0';
+    setTimeout(() => {
+      img.src = movie.backdrop || movie.poster || '';
+      img.style.opacity = '1';
+    }, 400);
+  }
+
+  if (title)    title.textContent    = movie.title;
+  if (overview) overview.textContent = movie.overview;
+  if (rating)   rating.textContent   = '★ ' + movie.rating;
+  if (year)     year.textContent     = movie.year;
+  window._heroMovie = movie;
+}
+
+// start from index 1 since index 0 is already shown as featured
+heroIndex = 1;
+if (top10Data.length > 1) {
+  setInterval(() => {
+    // preload next image
+    const next = top10Data[heroIndex];
+    const preload = new Image();
+    preload.src = next.backdrop || next.poster || '';
+    
+    preload.onload = () => {
+      updateHero(next);
+    };
+
+    heroIndex = (heroIndex + 1) % top10Data.length;
+  }, 4000);
+}
+  // Top 10 clicks
+  document.querySelectorAll('.top10-item').forEach(item => {
+    const movie = JSON.parse(item.dataset.movie);
+    item.addEventListener('click', () => openModal(movie));
+  });
+
+  // Tab switching
+  async function switchTab(type, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const grid = document.getElementById('movieGrid');
+    grid.innerHTML = skeletons(12);
+    const res  = await fetch(`/api/${type}`);
+    const data = await res.json();
+    renderGrid(grid, data);
+    document.querySelectorAll('.movie-card').forEach(card => {
+      const movie = JSON.parse(card.dataset.movie);
+      card.addEventListener('click', () => openModal(movie));
+      card.querySelector('.wl-btn')?.addEventListener('click', e => { e.stopPropagation(); addToWatchlist(movie); });
+      card.querySelector('.wt-btn')?.addEventListener('click', e => { e.stopPropagation(); markWatched(movie); });
+    });
+  }
+
+  // AI Recommendations
+  async function getAIRecs() {
+    const mood   = document.getElementById('moodInput').value.trim();
+    if (!mood) return;
+    const btn    = document.getElementById('aiBtn');
+    const result = document.getElementById('aiResult');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Thinking...';
+    result.classList.remove('show');
+    const res  = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mood })
+    });
+    const data = await res.json();
+    result.textContent = data.result || data.error;
+    result.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Get Picks';
+  }
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js');
+  }
+</script>
+</body>
+</html>
