@@ -1,3 +1,4 @@
-echo .env >> .gitignore
-echo data/movies.db >> .gitignore
-echo __pycache__/ >> .gitignore
+.env
+data/movies.db
+__pycache__/
+*.pyc
