@@ -172,9 +172,8 @@ def profile_password():
 # ── Google OAuth ──────────────────────────────────────────────
 @auth_bp.route('/auth/google')
 def google_login():
-    redirect_uri = url_for('auth.google_callback', _external=True)
+    redirect_uri = 'https://nexon-production-54f4.up.railway.app/auth/google/callback'
     return oauth.google.authorize_redirect(redirect_uri)
-
 
 @auth_bp.route('/auth/google/callback')
 def google_callback():
